@@ -16,15 +16,6 @@ describe("Book Routes tests", function() {
     title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
     year: 2017
   };
-  const updatedBook1Data = {
-    amazon_url: "http://a.co/eobPtX2",
-    author: "Matthew Lane",
-    language: "english",
-    pages: 264,
-    publisher: "Princeton University Press",
-    title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
-    year: 2018
-  }
   let book1;
 
   beforeEach(async function() {
@@ -59,6 +50,54 @@ describe("Book Routes tests", function() {
       let response = await request(app).get(`/books/1`);
 
       expect(response.statusCode).toEqual(404);
+    });
+  });
+
+  describe("POST /books tests", function() {
+    test("Can successfully add a new book", async function() {
+      const franklinsBook = {
+        isbn: "123456789",
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Franklin Kong",
+        language: "english",
+        pages: 100,
+        publisher: "Springboard Publishing",
+        title: "The Adventures of Onion",
+        year: 2024
+      }
+      let response = await request(app).post(`/books`).send(franklinsBook);
+
+      expect(response.statusCode).toEqual(201);
+      expect(response.body).toEqual({book: franklinsBook});
+    });
+
+    test("Can't add a new book if it's missing a year", async function() {
+      let response = await request(app).post(`/books`).send({
+        isbn: "123456789",
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Franklin Kong",
+        language: "english",
+        pages: 100,
+        publisher: "Springboard Publishing",
+        title: "The Adventures of Onion"
+      });
+
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test("Can't add a new book if the year is of the wrong format", async function() {
+      let response = await request(app).post(`/books`).send({
+        isbn: "123456789",
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Franklin Kong",
+        language: "english",
+        pages: 100,
+        publisher: "Springboard Publishing",
+        title: "The Adventures of Onion",
+        year: "2018"
+      });
+
+      expect(response.statusCode).toEqual(400);
     });
   });
 });
