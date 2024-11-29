@@ -158,4 +158,24 @@ describe("Book Routes tests", function() {
       expect(response.statusCode).toEqual(404);
     });
   });
+
+  describe("DELETE /books/[isbn] tests", function() {
+    test("Can successfully delete a book", async function() {
+      let response = await request(app).delete(`/books/${book1Data.isbn}`);
+
+      expect(response.statusCode).toEqual(200);
+
+      response = await request(app).get(`/books`);
+      expect(response.body.books.length).toEqual(0);
+    });
+
+    test("Can't delete a book with an invalid isbn", async function() {
+      let response = await request(app).delete(`/books/1`);
+
+      expect(response.statusCode).toEqual(404);
+
+      response = await request(app).get(`/books`);
+      expect(response.body.books.length).toEqual(1);
+    });
+  });
 });
