@@ -100,4 +100,62 @@ describe("Book Routes tests", function() {
       expect(response.statusCode).toEqual(400);
     });
   });
+
+  describe("PUT /books/[isbn] tests", function() {
+    test("Can successfully update a book with the right body", async function() {
+      let response = await request(app).put(`/books/${book1Data.isbn}`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Matthew Lane",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
+        year: 2018
+      });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body.book.year).toEqual(2018);
+    });
+
+    test("Can't update a book if you're missing the year", async function() {
+      let response = await request(app).put(`/books/${book1Data.isbn}`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Matthew Lane",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games"
+      });
+
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test("Can't update a book if the year is of a wrong format", async function() {
+      let response = await request(app).put(`/books/${book1Data.isbn}`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Matthew Lane",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
+        year: "2018"
+      });
+
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test("Can't update a book if the isbn is wrong", async function() {
+      let response = await request(app).put(`/books/1`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Matthew Lane",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
+        year: 2018
+      });
+
+      expect(response.statusCode).toEqual(404);
+    });
+  });
 });
