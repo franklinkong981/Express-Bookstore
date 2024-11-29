@@ -159,6 +159,59 @@ describe("Book Routes tests", function() {
     });
   });
 
+  describe("PUT /books/partial_update[isbn] tests", function() {
+    test("Can successfully update a book while missing some parts of the body", async function() {
+      let response = await request(app).put(`/books/partial_update/${book1Data.isbn}`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
+        year: 2018
+      });
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body.book.author).toEqual("Matthew Lane");
+      expect(response.body.book.year).toEqual(2018);
+    });
+
+    test("Can successfully update a book even with an empty body", async function() {
+      let response = await request(app).put(`/books/partial_update/${book1Data.isbn}`).send({});
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body.book.author).toEqual("Matthew Lane");
+      expect(response.body.book.year).toEqual(2017);
+    });
+
+    test("Can't update a book if the year is of a wrong format", async function() {
+      let response = await request(app).put(`/books/${book1Data.isbn}`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Matthew Lane",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
+        year: "2018"
+      });
+
+      expect(response.statusCode).toEqual(400);
+    });
+
+    test("Can't update a book if the isbn is wrong", async function() {
+      let response = await request(app).put(`/books/1`).send({
+        amazon_url: "http://a.co/eobPtX2",
+        author: "Matthew Lane",
+        language: "english",
+        pages: 264,
+        publisher: "Princeton University Press",
+        title: "Power-up: Unlocking the Hidden Mathematics in Video Games",
+        year: 2018
+      });
+
+      expect(response.statusCode).toEqual(404);
+    });
+  });
+
   describe("DELETE /books/[isbn] tests", function() {
     test("Can successfully delete a book", async function() {
       let response = await request(app).delete(`/books/${book1Data.isbn}`);
