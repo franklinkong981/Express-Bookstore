@@ -6,6 +6,7 @@ const Book = require("../models/book");
 const ExpressError = require("../expressError");
 const createBookSchema = require("../schemas/createBookSchema.json");
 const updateBookSchema = require("../schemas/updateBookSchema.json");
+const updatePartialBookSchema = require("../schemas/updatePartialBookSchema.json");
 
 /** GET / => {books: [book, ...]}  */
 
@@ -57,6 +58,21 @@ router.put("/:isbn", async function (req, res, next) {
     }
 
     const book = await Book.update(req.params.isbn, req.body);
+    return res.json({ book });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.put("/partial_update/:isbn", async function (req, res, next) {
+  try {
+    const requestValidation = jsonschema.validate(req.body, updatePartialBookSchema);
+    if (!requestValidation.valid) {
+      const listOfErrors = requestValidation.errors.map(e => e.stack);
+      throw new ExpressError(listOfErrors, 400);
+    }
+
+    const book = await Book.updatePart(req.params.isbn, req.body);
     return res.json({ book });
   } catch (err) {
     return next(err);
