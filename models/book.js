@@ -142,6 +142,41 @@ class Book {
     return result.rows[0];
   }
 
+  static async updatePart(isbn, data) {
+    const currentBookRes = await db.query(
+      `SELECT isbn, amazon_url, author, language, pages, publisher, title, year
+      FROM books WHERE isbn = $1`, 
+      [isbn]);
+    if (result.rows.length === 0) {
+      throw new ExpressError(`There is no book with an isbn of ${isbn}`, 404);
+    }
+    const currentBook = currentBookRes.rows[0];
+
+    const {
+      amazon_url = currentBook.amazon_url,
+      author = currentBook.author,
+      language = currentBook.language,
+      pages = currentBook.pages,
+      publisher = currentBook.publisher,
+      title = currentBook.title,
+      year = currentBook.year
+    } = data;
+    const result = await db.query(
+      `UPDATE books SET 
+            amazon_url=($1),
+            author=($2),
+            language=($3),
+            pages=($4),
+            publisher=($5),
+            title=($6),
+            year=($7)
+            WHERE isbn=$8
+      RETURNING isbn, amazon_url, author, language, pages, publisher, title, year`,
+      [amazon_url, author, language, pages, publisher, title, year, isbn]
+    );
+    return result.rows[0];
+  }
+
   /** remove book with matching isbn. Returns undefined. */
 
   static async remove(isbn) {
