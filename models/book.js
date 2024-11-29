@@ -1,5 +1,5 @@
 const db = require("../db");
-const ExpressError = require("./expressError");
+const ExpressError = require("../expressError");
 
 /** Collection of related methods for books. */
 
