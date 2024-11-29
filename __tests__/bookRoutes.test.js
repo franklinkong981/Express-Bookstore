@@ -47,4 +47,18 @@ describe("Book Routes tests", function() {
       expect(response.body).toEqual({books: [book1]});
     });
   });
+
+  describe("GET /books/isbn tests", function() {
+    test("Can get book data for an existing book", async function() {
+      let response = await request(app).get(`/books/${book1Data.isbn}`);
+
+      expect(response.statusCode).toEqual(200);
+      expect(response.body).toEqual({book: book1});
+    });
+    test("Invalid id will return an error", async function() {
+      let response = await request(app).get(`/books/1`);
+
+      expect(response.statusCode).toEqual(404);
+    });
+  });
 });
