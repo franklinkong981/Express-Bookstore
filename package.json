@@ -1,0 +1,21 @@
+{
+  "name": "express-bookstore",
+  "version": "1.0.0",
+  "description": "Bookstore app using Node and Express that stores books by validating JSON data sent in before adding it to the bookstore.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jest": "^29.7.0",
+    "jsonschema": "^1.4.1",
+    "morgan": "^1.10.0",
+    "pg": "^8.13.1",
+    "supertest": "^7.0.0"
+  }
+}
